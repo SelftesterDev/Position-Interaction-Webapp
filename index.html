@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Element Position Interaction Test</title>
+<title>Position Interaction Test</title>
 
 <style>
 
@@ -10,10 +10,6 @@ body{
 font-family:Arial;
 padding:40px;
 background:#f5f7fa;
-}
-
-h1{
-margin-bottom:20px;
 }
 
 #container{
@@ -66,12 +62,16 @@ padding:15px;
 width:420px;
 }
 
+.resultLine{
+margin-top:6px;
+}
+
 </style>
 </head>
 
 <body>
 
-<h1>Position Interaction Test</h1>
+<h1>Element Position Interaction Test</h1>
 
 <div id="container">
 
@@ -83,14 +83,12 @@ Home
 
 <div id="resultBox">
 
-<div>
-Click result:
-<b id="clickZone">NONE</b>
+<div class="resultLine">
+<b id="clickZone">CLICK ZONE: NONE</b>
 </div>
 
-<div>
-Drop result:
-<b id="dropZone">NONE</b>
+<div class="resultLine">
+<b id="dropZone">DROP ZONE: NONE</b>
 </div>
 
 <div id="coords"></div>
@@ -114,25 +112,31 @@ abc
 <script>
 
 const element=document.getElementById("home")
-
 const clickZone=document.getElementById("clickZone")
 const dropZone=document.getElementById("dropZone")
 const coords=document.getElementById("coords")
 
+// -------------------------
+// ZONE DETECTION
+// -------------------------
+
 function detectZone(x,y,w,h){
 
-const edge=6
+const edge=8
 
-if(x<=6 && y<=6) return "TOP LEFT CORNER"
-if(x>=w-6 && y<=6) return "TOP RIGHT CORNER"
-if(x<=6 && y>=h-6) return "BOTTOM LEFT CORNER"
-if(x>=w-6 && y>=h-6) return "BOTTOM RIGHT CORNER"
+// corners
+if(x<=8 && y<=8) return "TOP LEFT CORNER"
+if(x>=w-8 && y<=8) return "TOP RIGHT CORNER"
+if(x<=8 && y>=h-8) return "BOTTOM LEFT CORNER"
+if(x>=w-8 && y>=h-8) return "BOTTOM RIGHT CORNER"
 
+// edges
 if(y<=edge) return "TOP EDGE"
 if(y>=h-edge) return "BOTTOM EDGE"
 if(x<=edge) return "LEFT EDGE"
 if(x>=w-edge) return "RIGHT EDGE"
 
+// sides
 if(x<w/2 && y>h*0.25 && y<h*0.75) return "LEFT SIDE"
 if(x>w/2 && y>h*0.25 && y<h*0.75) return "RIGHT SIDE"
 
@@ -142,13 +146,16 @@ return "BOTTOM SIDE"
 
 }
 
+// -------------------------
+// MARKER
+// -------------------------
+
 function drawMarker(x,y){
 
 const old=document.querySelector(".marker")
 if(old) old.remove()
 
 const marker=document.createElement("div")
-
 marker.className="marker"
 
 marker.style.left=x+"px"
@@ -158,9 +165,11 @@ element.appendChild(marker)
 
 }
 
-// CLICK TEST
+// -------------------------
+// CLICK VALIDATION
+// -------------------------
 
-element.addEventListener("click",function(e){
+element.addEventListener("click",(e)=>{
 
 const rect=element.getBoundingClientRect()
 
@@ -171,28 +180,33 @@ const zone=detectZone(x,y,rect.width,rect.height)
 
 clickZone.textContent="CLICK ZONE: "+zone
 
-coords.textContent="x:"+Math.round(x)+" y:"+Math.round(y)
+coords.textContent=`x:${Math.round(x)} y:${Math.round(y)}`
 
 drawMarker(x,y)
 
 })
 
-
-// DRAG TEST
+// -------------------------
+// DRAG START
+// -------------------------
 
 const dragItem=document.getElementById("dragItem")
 
 dragItem.addEventListener("dragstart",(e)=>{
-
 e.dataTransfer.setData("text","abc")
-
 })
+
+// -------------------------
+// DRAG OVER
+// -------------------------
 
 element.addEventListener("dragover",(e)=>{
-
 e.preventDefault()
-
 })
+
+// -------------------------
+// DROP VALIDATION
+// -------------------------
 
 element.addEventListener("drop",(e)=>{
 
@@ -207,7 +221,7 @@ const zone=detectZone(x,y,rect.width,rect.height)
 
 dropZone.textContent="DROP ZONE: "+zone
 
-coords.textContent="x:"+Math.round(x)+" y:"+Math.round(y)
+coords.textContent=`x:${Math.round(x)} y:${Math.round(y)}`
 
 drawMarker(x,y)
 
