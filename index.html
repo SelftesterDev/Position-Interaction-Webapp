@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Drag Position Validation</title>
+<title>Element Position Interaction Test</title>
 
 <style>
 
@@ -10,6 +10,16 @@ body{
 font-family:Arial;
 padding:40px;
 background:#f5f7fa;
+}
+
+h1{
+margin-bottom:20px;
+}
+
+#container{
+display:flex;
+gap:60px;
+align-items:flex-start;
 }
 
 #home{
@@ -23,6 +33,8 @@ justify-content:center;
 font-size:28px;
 font-weight:bold;
 position:relative;
+cursor:pointer;
+user-select:none;
 }
 
 #dragItem{
@@ -46,7 +58,7 @@ border-radius:50%;
 transform:translate(-50%,-50%);
 }
 
-#result{
+#resultBox{
 margin-top:30px;
 background:white;
 border:1px solid #ccc;
@@ -59,24 +71,53 @@ width:420px;
 
 <body>
 
-<h2>Drag Position Test</h2>
+<h1>Position Interaction Test</h1>
 
-<div id="dragItem" draggable="true">
-abc
-</div>
+<div id="container">
+
+<div>
 
 <div id="home">
 Home
 </div>
 
-<div id="result">
-Drop zone: <b id="dropZone">NONE</b>
+<div id="resultBox">
+
+<div>
+Click result:
+<b id="clickZone">NONE</b>
+</div>
+
+<div>
+Drop result:
+<b id="dropZone">NONE</b>
+</div>
+
+<div id="coords"></div>
+
+</div>
+
+</div>
+
+<div>
+
+<div id="dragItem" draggable="true">
+abc
+</div>
+
+<p>Drag this element onto <b>Home</b></p>
+
+</div>
+
 </div>
 
 <script>
 
 const element=document.getElementById("home")
+
+const clickZone=document.getElementById("clickZone")
 const dropZone=document.getElementById("dropZone")
+const coords=document.getElementById("coords")
 
 function detectZone(x,y,w,h){
 
@@ -107,7 +148,9 @@ const old=document.querySelector(".marker")
 if(old) old.remove()
 
 const marker=document.createElement("div")
+
 marker.className="marker"
+
 marker.style.left=x+"px"
 marker.style.top=y+"px"
 
@@ -115,14 +158,40 @@ element.appendChild(marker)
 
 }
 
+// CLICK TEST
+
+element.addEventListener("click",function(e){
+
+const rect=element.getBoundingClientRect()
+
+const x=e.clientX-rect.left
+const y=e.clientY-rect.top
+
+const zone=detectZone(x,y,rect.width,rect.height)
+
+clickZone.textContent="CLICK ZONE: "+zone
+
+coords.textContent="x:"+Math.round(x)+" y:"+Math.round(y)
+
+drawMarker(x,y)
+
+})
+
+
+// DRAG TEST
+
 const dragItem=document.getElementById("dragItem")
 
 dragItem.addEventListener("dragstart",(e)=>{
+
 e.dataTransfer.setData("text","abc")
+
 })
 
 element.addEventListener("dragover",(e)=>{
+
 e.preventDefault()
+
 })
 
 element.addEventListener("drop",(e)=>{
@@ -137,6 +206,8 @@ const y=e.clientY-rect.top
 const zone=detectZone(x,y,rect.width,rect.height)
 
 dropZone.textContent="DROP ZONE: "+zone
+
+coords.textContent="x:"+Math.round(x)+" y:"+Math.round(y)
 
 drawMarker(x,y)
 
