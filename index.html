@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Drag Position Validation</title>
+
+<style>
+
+body{
+font-family:Arial;
+padding:40px;
+background:#f5f7fa;
+}
+
+#home{
+width:420px;
+height:260px;
+border:3px solid #1976d2;
+background:#e3f2fd;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:28px;
+font-weight:bold;
+position:relative;
+}
+
+#dragItem{
+width:90px;
+height:40px;
+background:#ffcc80;
+border:2px solid #ef6c00;
+display:flex;
+align-items:center;
+justify-content:center;
+cursor:grab;
+margin-bottom:20px;
+}
+
+.marker{
+position:absolute;
+width:14px;
+height:14px;
+background:red;
+border-radius:50%;
+transform:translate(-50%,-50%);
+}
+
+#result{
+margin-top:30px;
+background:white;
+border:1px solid #ccc;
+padding:15px;
+width:420px;
+}
+
+</style>
+</head>
+
+<body>
+
+<h2>Drag Position Test</h2>
+
+<div id="dragItem" draggable="true">
+abc
+</div>
+
+<div id="home">
+Home
+</div>
+
+<div id="result">
+Drop zone: <b id="dropZone">NONE</b>
+</div>
+
+<script>
+
+const element=document.getElementById("home")
+const dropZone=document.getElementById("dropZone")
+
+function detectZone(x,y,w,h){
+
+const edge=6
+
+if(x<=6 && y<=6) return "TOP LEFT CORNER"
+if(x>=w-6 && y<=6) return "TOP RIGHT CORNER"
+if(x<=6 && y>=h-6) return "BOTTOM LEFT CORNER"
+if(x>=w-6 && y>=h-6) return "BOTTOM RIGHT CORNER"
+
+if(y<=edge) return "TOP EDGE"
+if(y>=h-edge) return "BOTTOM EDGE"
+if(x<=edge) return "LEFT EDGE"
+if(x>=w-edge) return "RIGHT EDGE"
+
+if(x<w/2 && y>h*0.25 && y<h*0.75) return "LEFT SIDE"
+if(x>w/2 && y>h*0.25 && y<h*0.75) return "RIGHT SIDE"
+
+if(y<h/2) return "TOP SIDE"
+
+return "BOTTOM SIDE"
+
+}
+
+function drawMarker(x,y){
+
+const old=document.querySelector(".marker")
+if(old) old.remove()
+
+const marker=document.createElement("div")
+marker.className="marker"
+marker.style.left=x+"px"
+marker.style.top=y+"px"
+
+element.appendChild(marker)
+
+}
+
+const dragItem=document.getElementById("dragItem")
+
+dragItem.addEventListener("dragstart",(e)=>{
+e.dataTransfer.setData("text","abc")
+})
+
+element.addEventListener("dragover",(e)=>{
+e.preventDefault()
+})
+
+element.addEventListener("drop",(e)=>{
+
+e.preventDefault()
+
+const rect=element.getBoundingClientRect()
+
+const x=e.clientX-rect.left
+const y=e.clientY-rect.top
+
+const zone=detectZone(x,y,rect.width,rect.height)
+
+dropZone.textContent="DROP ZONE: "+zone
+
+drawMarker(x,y)
+
+})
+
+</script>
+
+</body>
+</html>
