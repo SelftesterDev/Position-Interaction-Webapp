@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Position Interaction Test</title>
+<title>Element Position Interaction Test</title>
 
 <style>
 
@@ -63,7 +63,7 @@ width:420px;
 }
 
 .resultLine{
-margin-top:6px;
+margin-top:8px;
 }
 
 </style>
@@ -122,27 +122,46 @@ const coords=document.getElementById("coords")
 
 function detectZone(x,y,w,h){
 
+const corner=12
 const edge=8
 
-// corners
-if(x<=8 && y<=8) return "TOP LEFT CORNER"
-if(x>=w-8 && y<=8) return "TOP RIGHT CORNER"
-if(x<=8 && y>=h-8) return "BOTTOM LEFT CORNER"
-if(x>=w-8 && y>=h-8) return "BOTTOM RIGHT CORNER"
+// corners (evaluados primero)
+
+if(x <= corner && y <= corner)
+return "TOP LEFT CORNER"
+
+if(x >= w-corner && y <= corner)
+return "TOP RIGHT CORNER"
+
+if(x <= corner && y >= h-corner)
+return "BOTTOM LEFT CORNER"
+
+if(x >= w-corner && y >= h-corner)
+return "BOTTOM RIGHT CORNER"
+
 
 // edges
-if(y<=edge) return "TOP EDGE"
-if(y>=h-edge) return "BOTTOM EDGE"
-if(x<=edge) return "LEFT EDGE"
-if(x>=w-edge) return "RIGHT EDGE"
+
+if(y <= edge)
+return "TOP EDGE"
+
+if(y >= h-edge)
+return "BOTTOM EDGE"
+
+if(x <= edge)
+return "LEFT EDGE"
+
+if(x >= w-edge)
+return "RIGHT EDGE"
+
 
 // sides
-if(x<w/2 && y>h*0.25 && y<h*0.75) return "LEFT SIDE"
-if(x>w/2 && y>h*0.25 && y<h*0.75) return "RIGHT SIDE"
 
-if(y<h/2) return "TOP SIDE"
+if(x < w/2)
+return "LEFT SIDE"
 
-return "BOTTOM SIDE"
+if(x >= w/2)
+return "RIGHT SIDE"
 
 }
 
@@ -156,6 +175,7 @@ const old=document.querySelector(".marker")
 if(old) old.remove()
 
 const marker=document.createElement("div")
+
 marker.className="marker"
 
 marker.style.left=x+"px"
@@ -166,7 +186,7 @@ element.appendChild(marker)
 }
 
 // -------------------------
-// CLICK VALIDATION
+// CLICK TEST
 // -------------------------
 
 element.addEventListener("click",(e)=>{
@@ -186,6 +206,7 @@ drawMarker(x,y)
 
 })
 
+
 // -------------------------
 // DRAG START
 // -------------------------
@@ -193,7 +214,9 @@ drawMarker(x,y)
 const dragItem=document.getElementById("dragItem")
 
 dragItem.addEventListener("dragstart",(e)=>{
+
 e.dataTransfer.setData("text","abc")
+
 })
 
 // -------------------------
@@ -201,11 +224,13 @@ e.dataTransfer.setData("text","abc")
 // -------------------------
 
 element.addEventListener("dragover",(e)=>{
+
 e.preventDefault()
+
 })
 
 // -------------------------
-// DROP VALIDATION
+// DROP TEST
 // -------------------------
 
 element.addEventListener("drop",(e)=>{
