@@ -111,10 +111,10 @@ abc
 
 <script>
 
-const element=document.getElementById("home")
-const clickZone=document.getElementById("clickZone")
-const dropZone=document.getElementById("dropZone")
-const coords=document.getElementById("coords")
+const element = document.getElementById("home")
+const clickZone = document.getElementById("clickZone")
+const dropZone = document.getElementById("dropZone")
+const coords = document.getElementById("coords")
 
 // -------------------------
 // ZONE DETECTION
@@ -122,10 +122,10 @@ const coords=document.getElementById("coords")
 
 function detectZone(x,y,w,h){
 
-const corner=12
-const edge=8
+const corner = 12
+const edge = 8
 
-// corners (evaluados primero)
+// CORNERS
 
 if(x <= corner && y <= corner)
 return "TOP LEFT CORNER"
@@ -139,8 +139,7 @@ return "BOTTOM LEFT CORNER"
 if(x >= w-corner && y >= h-corner)
 return "BOTTOM RIGHT CORNER"
 
-
-// edges
+// EDGES
 
 if(y <= edge)
 return "TOP EDGE"
@@ -154,13 +153,19 @@ return "LEFT EDGE"
 if(x >= w-edge)
 return "RIGHT EDGE"
 
+// SIDES (TOP / BOTTOM)
 
-// sides
+if(y < h/2 && x > w*0.25 && x < w*0.75)
+return "TOP SIDE"
+
+if(y >= h/2 && x > w*0.25 && x < w*0.75)
+return "BOTTOM SIDE"
+
+// SIDES (LEFT / RIGHT)
 
 if(x < w/2)
 return "LEFT SIDE"
 
-if(x >= w/2)
 return "RIGHT SIDE"
 
 }
@@ -191,16 +196,16 @@ element.appendChild(marker)
 
 element.addEventListener("click",(e)=>{
 
-const rect=element.getBoundingClientRect()
+const rect = element.getBoundingClientRect()
 
-const x=e.clientX-rect.left
-const y=e.clientY-rect.top
+const x = e.clientX - rect.left
+const y = e.clientY - rect.top
 
-const zone=detectZone(x,y,rect.width,rect.height)
+const zone = detectZone(x,y,rect.width,rect.height)
 
-clickZone.textContent="CLICK ZONE: "+zone
+clickZone.textContent = "CLICK ZONE: " + zone
 
-coords.textContent=`x:${Math.round(x)} y:${Math.round(y)}`
+coords.textContent = `x:${Math.round(x)} y:${Math.round(y)}`
 
 drawMarker(x,y)
 
@@ -211,23 +216,21 @@ drawMarker(x,y)
 // DRAG START
 // -------------------------
 
-const dragItem=document.getElementById("dragItem")
+const dragItem = document.getElementById("dragItem")
 
 dragItem.addEventListener("dragstart",(e)=>{
-
 e.dataTransfer.setData("text","abc")
-
 })
+
 
 // -------------------------
 // DRAG OVER
 // -------------------------
 
 element.addEventListener("dragover",(e)=>{
-
 e.preventDefault()
-
 })
+
 
 // -------------------------
 // DROP TEST
@@ -237,16 +240,16 @@ element.addEventListener("drop",(e)=>{
 
 e.preventDefault()
 
-const rect=element.getBoundingClientRect()
+const rect = element.getBoundingClientRect()
 
-const x=e.clientX-rect.left
-const y=e.clientY-rect.top
+const x = e.clientX - rect.left
+const y = e.clientY - rect.top
 
-const zone=detectZone(x,y,rect.width,rect.height)
+const zone = detectZone(x,y,rect.width,rect.height)
 
-dropZone.textContent="DROP ZONE: "+zone
+dropZone.textContent = "DROP ZONE: " + zone
 
-coords.textContent=`x:${Math.round(x)} y:${Math.round(y)}`
+coords.textContent = `x:${Math.round(x)} y:${Math.round(y)}`
 
 drawMarker(x,y)
 
